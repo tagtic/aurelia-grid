@@ -48,12 +48,12 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                         th.innerHTML = c.headingTemplate;
                         fragment.appendChild(th);
                         var view = _this.viewCompiler.compile(fragment, _this.viewResources).create(_this.container);
-                        // var bindingContext = {
-                        // 	// I'm having problem if I try to use $parent. The template never seems to see that
-                        // 	'$grid' : this.grid,
-                        // 	'$column' : c,
-                        // }
-                        view.bind(_this.grid, overrideBindingContext);
+                        var bindingContext = {
+                            // I'm having problem if I try to use $parent. The template never seems to see that
+                            '$grid': _this.grid,
+                            '$column': c,
+                        };
+                        view.bind(bindingContext, overrideBindingContext);
                         var columnSlot = new aurelia_framework_1.ViewSlot(theadTr, true);
                         columnSlot.add(view);
                         columnSlot.attached();

@@ -71,12 +71,12 @@ export class GridBuilder {
 			fragment.appendChild(th);
 			
 			var view = this.viewCompiler.compile(fragment, this.viewResources).create(this.container);
-			// var bindingContext = {
-			// 	// I'm having problem if I try to use $parent. The template never seems to see that
-			// 	'$grid' : this.grid,
-			// 	'$column' : c,
-			// }
-			view.bind(this.grid, overrideBindingContext);
+			var bindingContext = {
+				// I'm having problem if I try to use $parent. The template never seems to see that
+				'$grid' : this.grid,
+				'$column' : c,
+			}
+			view.bind(bindingContext, overrideBindingContext);
 			
 			var columnSlot = new ViewSlot(theadTr, true);
 			columnSlot.add(view);

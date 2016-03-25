@@ -8,6 +8,7 @@ System.register([], function(exports_1, context_1) {
             /** All Attributes on <grid-col  */
             GridColumn = (function () {
                 function GridColumn() {
+                    this.canSort = true;
                 }
                 GridColumn.prototype.init = function () {
                     // we can accept the field to be null if the column has no sorting enabled

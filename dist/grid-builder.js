@@ -44,7 +44,7 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                         var fragment = document.createDocumentFragment();
                         var th = document.createElement("th");
                         th.setAttribute("class", "grid-column ${$column.headerClass} ${($column.canSort && $grid.columnsCanSort) ? 'grid-column-sortable': 'grid-column-non-sortable'} ${ $column.class !== '' ? $column.class : '' }");
-                        if (c.canSort == true) {
+                        if (_this.grid.columnsCanSort == true && c.canSort == true) {
                             th.setAttribute("click.trigger", "$grid.source.sortChanged($column, $event)");
                         }
                         th.innerHTML = c.headingTemplate;

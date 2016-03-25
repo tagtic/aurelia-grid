@@ -64,8 +64,9 @@ export class GridBuilder {
 			
 			var th = document.createElement("th");
 			th.setAttribute("class", "grid-column ${$column.headerClass} ${($column.canSort && $grid.columnsCanSort) ? 'grid-column-sortable': 'grid-column-non-sortable'} ${ $column.class !== '' ? $column.class : '' }");
-			th.setAttribute("click.trigger","$grid.source.sortChanged($column, $event)");
-
+			if (c.canSort == true){
+				th.setAttribute("click.trigger","$grid.source.sortChanged($column, $event)");
+			}
 			th.innerHTML = c.headingTemplate;
 			
 			fragment.appendChild(th);

@@ -82,7 +82,7 @@ export class Grid{
 	}
 
 	unbinding: boolean = false;
-	bind(bindingContext){
+	bind(bindingContext, overrideContext){
 		this["$parent"] = bindingContext;
 	
 		// todo - make glyphicons and fa icons classes
@@ -105,7 +105,7 @@ export class Grid{
 			}
 		}
 		
-		this.builder.build();
+		this.builder.build(bindingContext, overrideContext);
 	}
 	
 	unbind(){

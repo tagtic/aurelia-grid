@@ -1,4 +1,6 @@
-System.register(['aurelia-framework'], function(exports_1) {
+System.register(['aurelia-framework'], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var aurelia_framework_1;
     var GridBuilder;
     return {
@@ -18,15 +20,22 @@ System.register(['aurelia-framework'], function(exports_1) {
                     this.bindingEngine = this.grid.bindingEngine;
                     this.container = this.grid.container;
                 }
-                GridBuilder.prototype.build = function () {
+                GridBuilder.prototype.build = function (bindingContext, overrideContext) {
                     // Listen for window resize so we can re-flow the grid layout
                     this.resizeListener = window.addEventListener('resize', this.headersSyncColumnHeadersWithColumns.bind(this));
-                    this.buildHeadingTemplate();
-                    this.buildRowTemplate();
-                    this.buildPagerTemplate();
+                    this.buildHeadingTemplate(bindingContext, overrideContext);
+                    this.buildRowTemplate(bindingContext, overrideContext);
+                    this.buildPagerTemplate(bindingContext, overrideContext);
                 };
-                GridBuilder.prototype.buildHeadingTemplate = function () {
+                GridBuilder.prototype.buildHeadingTemplate = function (bindingContext, overrideContext) {
                     var _this = this;
+                    var overrideBindingContext = {
+                        bindingContext: this.grid,
+                        parentOverrideContext: {
+                            bindingContext: bindingContext,
+                            parentOverrideContext: overrideContext
+                        }
+                    };
                     this.headersViewSlots = [];
                     var theadTr = this.element.querySelector("table.grid-header-table>thead>tr.grid-headings");
                     // Create the columns headers
@@ -39,12 +48,12 @@ System.register(['aurelia-framework'], function(exports_1) {
                         th.innerHTML = c.headingTemplate;
                         fragment.appendChild(th);
                         var view = _this.viewCompiler.compile(fragment, _this.viewResources).create(_this.container);
-                        var bindingContext = {
-                            // I'm having problem if I try to use $parent. The template never seems to see that
-                            '$grid': _this.grid,
-                            '$column': c,
-                        };
-                        view.bind(bindingContext, _this.grid);
+                        // var bindingContext = {
+                        // 	// I'm having problem if I try to use $parent. The template never seems to see that
+                        // 	'$grid' : this.grid,
+                        // 	'$column' : c,
+                        // }
+                        view.bind(_this.grid, overrideBindingContext);
                         var columnSlot = new aurelia_framework_1.ViewSlot(theadTr, true);
                         columnSlot.add(view);
                         columnSlot.attached();
@@ -53,8 +62,15 @@ System.register(['aurelia-framework'], function(exports_1) {
                         _this.headersViewSlots.push(columnSlot);
                     });
                 };
-                GridBuilder.prototype.buildRowTemplate = function () {
+                GridBuilder.prototype.buildRowTemplate = function (bindingContext, overrideContext) {
                     var _this = this;
+                    var overrideBindingContext = {
+                        bindingContext: this.grid,
+                        parentOverrideContext: {
+                            bindingContext: bindingContext,
+                            parentOverrideContext: overrideContext
+                        }
+                    };
                     // The table body element will host the rows
                     var tbody = this.element.querySelector("table>tbody");
                     this.rowsViewSlot = new aurelia_framework_1.ViewSlot(tbody, true);
@@ -95,7 +111,7 @@ System.register(['aurelia-framework'], function(exports_1) {
                     // Templating 17.x changes the API
                     // ViewFactory.create() no longer takes a binding context (2nd parameter)
                     // Instead, must call view.bind(context)
-                    view.bind(this.grid);
+                    view.bind(this.grid, overrideBindingContext);
                     // based on viewSlot.swap() from templating 0.16.0
                     var removeResponse = this.rowsViewSlot.removeAll();
                     if (removeResponse instanceof Promise) {
@@ -107,7 +123,14 @@ System.register(['aurelia-framework'], function(exports_1) {
                     // HACK: why is the change handler not firing for noRowsMessage?
                     // this.noRowsMessageChanged(); /???
                 };
-                GridBuilder.prototype.buildPagerTemplate = function () {
+                GridBuilder.prototype.buildPagerTemplate = function (bindingContext, overrideContext) {
+                    var overrideBindingContext = {
+                        bindingContext: this.grid,
+                        parentOverrideContext: {
+                            bindingContext: bindingContext,
+                            parentOverrideContext: overrideContext
+                        }
+                    };
                     // build the custom template for the pager (if it exists)
                     // otherwise the default template will be shown
                     var thost = this.element.querySelector("div.grid-footer-custom-container");
@@ -121,14 +144,14 @@ System.register(['aurelia-framework'], function(exports_1) {
                     template.appendChild(templateValue);
                     templateValue.innerHTML = this.grid.pager.template;
                     var view = this.viewCompiler.compile(template, this.viewResources).create(this.container);
-                    var bindingContext = {
-                        // I'm having problem if I try to use $parent. The template never seems to see that
-                        '$parent': this.grid,
-                        '$grid': this.grid,
-                        '$pager': this.grid.pager,
-                        '$source': this.grid.source
-                    };
-                    view.bind(bindingContext, this.grid);
+                    // var bindingContext = {
+                    // 	// I'm having problem if I try to use $parent. The template never seems to see that
+                    // 	'$parent': this.grid,
+                    // 	'$grid' : this.grid,
+                    // 	'$pager' : this.grid.pager,
+                    // 	'$source': this.grid.source
+                    // };
+                    view.bind(this.grid, overrideBindingContext);
                     this.pagerViewSlot.add(view);
                     this.pagerViewSlot.attached();
                 };
@@ -159,7 +182,7 @@ System.register(['aurelia-framework'], function(exports_1) {
                     return container.offsetHeight < container.scrollHeight || container.offsetWidth < container.scrollWidth;
                 };
                 return GridBuilder;
-            })();
+            }());
             exports_1("GridBuilder", GridBuilder);
         }
     }

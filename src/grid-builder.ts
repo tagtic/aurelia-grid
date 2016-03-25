@@ -36,16 +36,23 @@ export class GridBuilder {
 		this.container = this.grid.container;
 	}
 
-	build() {
+	build(bindingContext, overrideContext) {
 		// Listen for window resize so we can re-flow the grid layout
 		this.resizeListener = window.addEventListener('resize', this.headersSyncColumnHeadersWithColumns.bind(this));
 
-		this.buildHeadingTemplate();
-		this.buildRowTemplate();
-		this.buildPagerTemplate();
+        this.buildHeadingTemplate(bindingContext, overrideContext);
+        this.buildRowTemplate(bindingContext, overrideContext);
+        this.buildPagerTemplate(bindingContext, overrideContext);
 	}
 
-	private buildHeadingTemplate(){
+	private buildHeadingTemplate(bindingContext, overrideContext){
+		let overrideBindingContext = {
+      		bindingContext: this.grid,
+				parentOverrideContext: {
+					bindingContext: bindingContext,
+					parentOverrideContext: overrideContext
+				}
+		};			
 		this.headersViewSlots = [];
 		
 		var theadTr = this.element.querySelector("table.grid-header-table>thead>tr.grid-headings");
@@ -64,12 +71,12 @@ export class GridBuilder {
 			fragment.appendChild(th);
 			
 			var view = this.viewCompiler.compile(fragment, this.viewResources).create(this.container);
-			var bindingContext = {
-				// I'm having problem if I try to use $parent. The template never seems to see that
-				'$grid' : this.grid,
-				'$column' : c,
-			}
-			view.bind(bindingContext, this.grid);
+			// var bindingContext = {
+			// 	// I'm having problem if I try to use $parent. The template never seems to see that
+			// 	'$grid' : this.grid,
+			// 	'$column' : c,
+			// }
+			view.bind(this.grid, overrideBindingContext);
 			
 			var columnSlot = new ViewSlot(theadTr, true);
 			columnSlot.add(view);
@@ -82,7 +89,14 @@ export class GridBuilder {
 		});
 	}
 
-	private buildRowTemplate() {
+	private buildRowTemplate(bindingContext, overrideContext) {
+		let overrideBindingContext = {
+      		bindingContext: this.grid,
+				parentOverrideContext: {
+					bindingContext: bindingContext,
+					parentOverrideContext: overrideContext
+				}
+		};		
 		// The table body element will host the rows
 		var tbody = this.element.querySelector("table>tbody");
 		this.rowsViewSlot = new ViewSlot(tbody, true);
@@ -132,7 +146,7 @@ export class GridBuilder {
 		// Templating 17.x changes the API
 		// ViewFactory.create() no longer takes a binding context (2nd parameter)
 		// Instead, must call view.bind(context)
-		view.bind(this.grid);
+		view.bind(this.grid, overrideBindingContext);
 
 		// based on viewSlot.swap() from templating 0.16.0
 		let removeResponse = this.rowsViewSlot.removeAll();
@@ -150,7 +164,14 @@ export class GridBuilder {
 		// this.noRowsMessageChanged(); /???
 	}
 	
-	private buildPagerTemplate(){
+	private buildPagerTemplate(bindingContext, overrideContext){
+		let overrideBindingContext = {
+      		bindingContext: this.grid,
+				parentOverrideContext: {
+					bindingContext: bindingContext,
+					parentOverrideContext: overrideContext
+				}
+		};
 		// build the custom template for the pager (if it exists)
 		// otherwise the default template will be shown
 		var thost = this.element.querySelector("div.grid-footer-custom-container");
@@ -167,14 +188,14 @@ export class GridBuilder {
 		templateValue.innerHTML = this.grid.pager.template;
 
 		var view = this.viewCompiler.compile(template, this.viewResources).create(this.container);
-		var bindingContext = {
-			// I'm having problem if I try to use $parent. The template never seems to see that
-			'$parent': this.grid,
-			'$grid' : this.grid,
-			'$pager' : this.grid.pager,
-			'$source': this.grid.source
-		};
-		view.bind(bindingContext, this.grid);
+		// var bindingContext = {
+		// 	// I'm having problem if I try to use $parent. The template never seems to see that
+		// 	'$parent': this.grid,
+		// 	'$grid' : this.grid,
+		// 	'$pager' : this.grid.pager,
+		// 	'$source': this.grid.source
+		// };
+		view.bind(this.grid, overrideBindingContext);
 		this.pagerViewSlot.add(view);
 		this.pagerViewSlot.attached();
 	}

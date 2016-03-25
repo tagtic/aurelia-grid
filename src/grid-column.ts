@@ -7,7 +7,7 @@ export class GridColumn{
 	class: string;
 	headerClass: string;
 	
-	canSort: boolean;
+	canSort: boolean = true;
 	
 	canFilter: boolean;
 	filterPlaceholder: string;

@@ -177,8 +177,7 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                     ;
                 };
                 GridBuilder.prototype.isBodyOverflowing = function () {
-                    var container = this.grid.gridContainer();
-                    ;
+                    var container = this.grid.gridContainer;
                     return container.offsetHeight < container.scrollHeight || container.offsetWidth < container.scrollWidth;
                 };
                 return GridBuilder;

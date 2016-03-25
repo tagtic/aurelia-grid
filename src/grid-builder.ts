@@ -227,7 +227,7 @@ export class GridBuilder {
 	}
 	
 	isBodyOverflowing(): boolean {
-		var container = this.grid.gridContainer();;
+		var container = this.grid.gridContainer;
 		return container.offsetHeight < container.scrollHeight || container.offsetWidth < container.scrollWidth;
 	}
 }
